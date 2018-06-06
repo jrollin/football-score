@@ -10,6 +10,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class FootballScoringCommand extends Command
 {
+
+    /**
+     * store valid paths
+     *
+     * @var array
+     */
+    private $results = [];
+
+    /**
+     * init console
+     */
     protected function configure()
     {
         $this
@@ -31,8 +42,8 @@ class FootballScoringCommand extends Command
         // tree values :
         $choices = [3, 6, 7];
 
-        $teamA = (int)$input->getArgument("home");
-        $teamB = (int)$input->getArgument("visitor");
+        $teamA = (int)$input->getArgument('home');
+        $teamB = (int)$input->getArgument('visitor');
         $maxDepth = (int)$input->getOption('depth');
 
         // higher points scored during one match is 113 (72-41)...
@@ -43,6 +54,14 @@ class FootballScoringCommand extends Command
         // team A
         $this->combination(0, [], $choices, 0, $teamA, $maxDepth);
         $resultTeamA = $this->results;
+
+        // must have a result
+        if (count($resultTeamA) == 0) {
+            $output->writeln('<error>Team A score is not possible</error>');
+            return 1;
+        }
+
+
         $teamA = [];
         foreach ($resultTeamA as $r) {
             $teamA[] = sprintf('[%s]', implode(',', $r));
@@ -59,6 +78,12 @@ class FootballScoringCommand extends Command
         //team B
         $this->combination(0, [], $choices, 0, $teamB, $maxDepth);
         $resultTeamB = $this->results;
+
+        if (count($resultTeamB) == 0) {
+            $output->writeln('<error>Team B score is not possible</error>');
+            return 1;
+        }
+
         $teamB = [];
         foreach ($resultTeamB as $r) {
             $teamB[] = sprintf('[%s]', implode(',', $r));
@@ -76,13 +101,6 @@ class FootballScoringCommand extends Command
             $output->writeln(implode(',', $r));
         }
     }
-
-    /**
-     * store valid paths
-     *
-     * @var array
-     */
-    private $results = [];
 
 
     /**
