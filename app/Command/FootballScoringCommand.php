@@ -119,7 +119,7 @@ class FootballScoringCommand extends Command
     public function combination($parent, $path, $choices, $currentScore, $expectedScore, $maxDepth)
     {
         // sanity check
-        if (count($parent) > $maxDepth) {
+        if ($parent > $maxDepth) {
             return;
         }
 
